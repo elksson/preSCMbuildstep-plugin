@@ -29,6 +29,7 @@ import hudson.model.Environment;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
+import hudson.model.Result;
 import hudson.model.Cause.LegacyCodeCause;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildTrigger;
@@ -102,6 +103,7 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
         log.println("Running Prebuild steps");
         for (BuildStep bs : buildSteps)  {
             if (!bs.prebuild(build, listener)) {
+                build.setResult(Result.FAILURE);
                 log.println("Failed pre build for " + bs.toString());
             }
         }
@@ -114,6 +116,7 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
                     p.scheduleBuild(0, new LegacyCodeCause());
                 }
             } else if (!bs.perform(build, launcher, listener)) {
+                build.setResult(Result.FAILURE);
                 log.println("Failed build for " + bs.toString());
             } else {
                 log.println("Success build for" + bs.toString());
